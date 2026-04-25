@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}{{ card_object.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .card-page-shell {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+
+    .card-page-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .card-side-panel {
+        min-height: 520px;
+        padding: 1.35rem;
+        background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 58%, #f4fff9 100%);
+    }
+
+    .card-preview {
+        padding: 1.2rem;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 58%, #20c768 100%);
+        color: #ffffff;
+        box-shadow: var(--pn-shadow-md);
+    }
+
+    .card-preview-label {
+        font-size: 0.82rem;
+        opacity: 0.82;
+        margin-bottom: 0.35rem;
+    }
+
+    .card-preview-number {
+        letter-spacing: 0.18em;
+        font-size: 0.92rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-preview-balance {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+
+    .side-stack,
+    .side-links {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .side-link {
+        display: block;
+        padding: 0.9rem 1rem;
+        border-radius: 18px;
+        border: 1px solid rgba(220, 228, 241, 0.95);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.98) 100%);
+        text-decoration: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .side-link:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--pn-shadow-sm);
+    }
+
+    .side-link.active {
+        border-color: rgba(121, 160, 255, 0.55);
+        background: linear-gradient(135deg, rgba(237, 244, 255, 0.98) 0%, rgba(243, 255, 250, 0.98) 100%);
+    }
+
+    .row-title {
+        font-weight: 800;
+        margin-bottom: 0.12rem;
+    }
+
+    .row-subtitle {
+        color: var(--pn-muted);
+        font-size: 0.82rem;
+    }
+
+    .count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        padding: 0.32rem 0.7rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(237, 244, 255, 0.98) 0%, rgba(244, 239, 255, 0.98) 100%);
+        color: var(--pn-blue-dark);
+        font-size: 0.78rem;
+        font-weight: 800;
+    }
+
+    .detail-transaction {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.98) 100%);
+        border-color: rgba(220, 228, 241, 0.95);
+    }
+
+    .detail-transaction.transaction-income {
+        background: linear-gradient(135deg, rgba(238, 251, 245, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-color: rgba(125, 212, 167, 0.42);
+    }
+
+    .detail-transaction.transaction-expense {
+        background: linear-gradient(135deg, rgba(255, 240, 236, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-color: rgba(241, 111, 97, 0.34);
+    }
+
+    @media (min-width: 992px) {
+        .card-page-grid {
+            grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+            align-items: start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card-page-shell">
+    <div class="card-page-grid">
+        <aside class="surface-card card-side-panel d-none d-lg-flex flex-column">
+            <div class="side-stack w-100">
+                <div class="card-preview">
+                    <div class="card-preview-label">{{ card_object.name }}</div>
+                    <div class="card-preview-number">{{ card_object.masked_number }}</div>
+                    <div class="card-preview-label">Karta balansi</div>
+                    <p class="card-preview-balance">{{ card_summary.card_balance }} so'm</p>
+                </div>
+
+                <div>
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                        <strong>Kartalar</strong>
+                        <span class="count-badge">{{ total_cards }}</span>
+                    </div>
+                    <div class="side-links">
+                        {% for card in cards %}
+                            <a href="{% url 'card_detail' card.pk %}" class="side-link {% if active_card_id == card.pk %}active{% endif %}">
+                                <div class="row-title">{{ card.name }}</div>
+                                <div class="row-subtitle">{{ card.masked_number }}</div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="d-flex flex-column gap-4">
+            <div class="surface-card panel-blue">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                    <div>
+                        <h1 class="section-title">{{ card_object.name }}</h1>
+                        <p class="section-subtitle mb-0">{{ card_object.masked_number }}</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'card_income_create' card_object.pk %}" class="primary-button">Kirim</a>
+                        <a href="{% url 'card_expense_create' card_object.pk %}" class="soft-button">Chiqim</a>
+                        <a href="{% url 'card_update' card_object.pk %}" class="soft-button">Tahrirlash</a>
+                        <a href="{% url 'card_delete' card_object.pk %}" class="soft-button danger-link">O'chirish</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6 col-xl-3">
+                    <div class="surface-card panel-blue h-100">
+                        <div class="content-muted small mb-2">Karta balansi</div>
+                        <strong class="fs-3">{{ card_summary.card_balance }} so'm</strong>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
+                    <div class="surface-card panel-green h-100">
+                        <div class="content-muted small mb-2">Kirim</div>
+                        <strong class="fs-3">{{ card_summary.income }} so'm</strong>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
+                    <div class="surface-card panel-rose h-100">
+                        <div class="content-muted small mb-2">Chiqim</div>
+                        <strong class="fs-3">{{ card_summary.expense }} so'm</strong>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
+                    <div class="surface-card panel-gold h-100">
+                        <div class="content-muted small mb-2">Jami kartalar</div>
+                        <strong class="fs-3">{{ total_cards }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="surface-card panel-violet">
+                <div class="d-flex justify-content-between gap-3 flex-wrap mb-3">
+                    <div>
+                        <h2 class="section-title mb-1">Karta tranzaksiyalari</h2>
+                    </div>
+                    <a href="{% url 'card_list' %}" class="soft-button">Barchasi</a>
+                </div>
+
+                <div class="d-grid gap-3">
+                    {% for transaction in recent_transactions %}
+                        <div class="p-3 rounded-4 border detail-transaction {% if transaction.type == 'income' %}transaction-income{% else %}transaction-expense{% endif %}">
+                            <div class="d-flex justify-content-between gap-3 flex-wrap">
+                                <div>
+                                    <strong class="d-block mb-1">{{ transaction.get_type_display }}</strong>
+                                    <span class="content-muted d-block">{{ transaction.note|default:"Izohsiz tranzaksiya" }}</span>
+                                    <small class="content-muted">{{ transaction.created_at|date:"d M Y, H:i" }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge {% if transaction.type == 'income' %}text-bg-success{% else %}text-bg-danger{% endif %} px-3 py-2 rounded-pill">
+                                        {% if transaction.type == 'income' %}+{% else %}-{% endif %}{{ transaction.amount }} so'm
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 flex-wrap mt-3">
+                                <a href="{% url 'transaction_detail' transaction.pk %}?next={% url 'card_detail' card_object.pk %}" class="soft-button">Ko'rish</a>
+                                <a href="{% url 'transaction_delete' transaction.pk %}?next={% url 'card_detail' card_object.pk %}" class="soft-button danger-link">O'chirish</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-5 content-muted">Bu karta uchun tranzaksiya hali yo'q.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

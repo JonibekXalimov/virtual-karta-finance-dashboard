@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Tranzaksiya{% endblock %}
+
+{% block extra_head %}
+<style>
+    .detail-info-card {
+        border-radius: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-8">
+        <div class="surface-card panel-blue">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                <div>
+                    <h1 class="section-title mb-1">Tranzaksiya tafsiloti</h1>
+                    <p class="section-subtitle mb-0">{{ transaction.created_at|date:"d M Y, H:i" }}</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'transaction_delete' transaction.pk %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" class="soft-button danger-link">O'chirish</a>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded-4 border detail-info-card panel-violet h-100">
+                        <div class="content-muted small mb-2">Turi</div>
+                        <strong class="fs-5">{{ transaction.get_type_display }}</strong>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded-4 border detail-info-card panel-green h-100">
+                        <div class="content-muted small mb-2">Summa</div>
+                        <strong class="fs-5">{{ transaction.amount }} so'm</strong>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded-4 border detail-info-card panel-gold h-100">
+                        <div class="content-muted small mb-2">Karta</div>
+                        <strong class="fs-5"><a href="{% url 'card_detail' transaction.card.pk %}" class="text-decoration-none">{{ transaction.card.name }}</a></strong>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded-4 border detail-info-card panel-blue h-100">
+                        <div class="content-muted small mb-2">Karta raqami</div>
+                        <strong class="fs-5">{{ transaction.card.masked_number }}</strong>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3 rounded-4 border detail-info-card panel-rose h-100">
+                        <div class="content-muted small mb-2">Izoh</div>
+                        <strong class="fs-5">{{ transaction.note|default:"Izoh kiritilmagan" }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <a href="{% if next_url %}{{ next_url }}{% else %}{% url 'transaction_list' %}{% endif %}" class="soft-button">Orqaga</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

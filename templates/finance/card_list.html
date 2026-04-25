@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Kartalar{% endblock %}
+
+{% block extra_head %}
+<style>
+    .cards-list-item {
+        border-radius: 22px;
+    }
+
+    .cards-list-item:hover {
+        border-color: rgba(151, 182, 255, 0.42);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-12">
+        <div class="surface-card panel-blue">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                <div>
+                    <h1 class="section-title">Kartalarim</h1>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'card_create' %}" class="primary-button">Yangi karta +</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="row g-3">
+            <div class="col-6 col-xl-4">
+                <div class="surface-card panel-blue h-100">
+                    <div class="content-muted small mb-2">Umumiy balans</div>
+                    <strong class="fs-2">{{ balance }} so'm</strong>
+                </div>
+            </div>
+            <div class="col-6 col-xl-4">
+                <div class="surface-card panel-green h-100">
+                    <div class="content-muted small mb-2">Kirim</div>
+                    <strong class="fs-2">{{ income }} so'm</strong>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="surface-card panel-rose h-100">
+                    <div class="content-muted small mb-2">Chiqim</div>
+                    <strong class="fs-2">{{ expense }} so'm</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="surface-card panel-violet">
+            <div class="d-grid gap-3">
+                {% for card in cards %}
+                    <a href="{% url 'card_detail' card.pk %}" class="p-3 cards-list-item list-accent-item text-decoration-none d-block">
+                        <div class="d-flex justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <strong class="d-block mb-1">{{ card.name }}</strong>
+                                <span class="content-muted d-block">{{ card.masked_number }}</span>
+                                <small class="content-muted">{{ card.transactions.count }} ta tranzaksiya</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="content-muted d-block">Balans</span>
+                                <strong>{{ card.current_balance }} so'm</strong>
+                            </div>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="text-center py-5 content-muted">Hozircha karta yo'q.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

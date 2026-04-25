@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block extra_head %}
+<style>
+    .profile-hero {
+        background: linear-gradient(135deg, rgba(236, 244, 255, 0.98) 0%, rgba(255, 255, 255, 0.98) 55%, rgba(243, 239, 255, 0.98) 100%);
+    }
+
+    .profile-avatar {
+        width: 76px;
+        height: 76px;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid #eef2f7;
+        background: #ffffff;
+        box-shadow: var(--pn-shadow-sm);
+        flex-shrink: 0;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .metric-card {
+        padding: 1.1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(220, 228, 241, 0.95);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 251, 255, 0.98) 100%);
+        height: 100%;
+    }
+
+    .metric-card.balance-card {
+        background: linear-gradient(135deg, rgba(236, 244, 255, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-color: rgba(151, 182, 255, 0.42);
+    }
+
+    .metric-card.income-card {
+        background: linear-gradient(135deg, rgba(238, 251, 245, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-color: rgba(125, 212, 167, 0.42);
+    }
+
+    .metric-card.expense-card {
+        background: linear-gradient(135deg, rgba(255, 240, 236, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-color: rgba(241, 111, 97, 0.34);
+    }
+
+    .metric-card.count-card {
+        background: linear-gradient(135deg, rgba(255, 247, 231, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-color: rgba(244, 186, 71, 0.38);
+    }
+
+    .metric-label {
+        color: var(--pn-muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+    }
+
+    .metric-value {
+        font-size: clamp(1.35rem, 4vw, 1.9rem);
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-12">
+        <div class="surface-card profile-hero">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="profile-avatar">
+                        <img src="/media/icons/user-icon-simple-design-free-vector.jpg" alt="User">
+                    </div>
+                    <div>
+                        <h1 class="section-title mb-1">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                        <div class="content-muted">{{ profile_user.email|default:"Email kiritilmagan" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="row g-3">
+            <div class="col-6 col-xl-3">
+                <div class="metric-card balance-card">
+                    <div class="metric-label">Umumiy balans</div>
+                    <p class="metric-value">{{ total_balance }} so'm</p>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="metric-card income-card">
+                    <div class="metric-label">Kirim</div>
+                    <p class="metric-value">{{ total_income }} so'm</p>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="metric-card expense-card">
+                    <div class="metric-label">Chiqim</div>
+                    <p class="metric-value">{{ total_expense }} so'm</p>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="metric-card count-card">
+                    <div class="metric-label">Karta soni</div>
+                    <p class="metric-value">{{ card_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="surface-card panel-violet h-100">
+            <h2 class="section-title">Kartalar</h2>
+
+            <div class="d-grid gap-3">
+                {% for card in cards %}
+                    <div class="d-flex justify-content-between gap-3">
+                        <span class="content-muted">{{ card.name }}</span>
+                        <strong>{{ card.current_balance }} so'm</strong>
+                    </div>
+                {% empty %}
+                    <div class="content-muted">Karta mavjud emas.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="surface-card panel-gold h-100">
+            <h2 class="section-title">Hisob ma'lumotlari</h2>
+
+            <div class="d-grid gap-3">
+                <div class="d-flex justify-content-between gap-3">
+                    <span class="content-muted">Username</span>
+                    <strong>{{ profile_user.username }}</strong>
+                </div>
+                <div class="d-flex justify-content-between gap-3">
+                    <span class="content-muted">Ro'yxatdan o'tgan sana</span>
+                    <strong>{{ profile_user.date_joined|date:"d M Y, H:i" }}</strong>
+                </div>
+                <div class="d-flex justify-content-between gap-3">
+                    <span class="content-muted">Oxirgi kirish</span>
+                    <strong>{{ profile_user.last_login|date:"d M Y, H:i"|default:"Hali yo'q" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

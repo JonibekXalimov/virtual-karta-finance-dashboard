@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Kirish{% endblock %}
+
+{% block extra_head %}
+<style>
+    .auth-page {
+        min-height: calc(100vh - 260px);
+    }
+
+    .auth-shell {
+        overflow: hidden;
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.98) 100%);
+        border: 1px solid rgba(225, 233, 244, 0.95);
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.10);
+    }
+
+    .auth-aside {
+        padding: 2rem;
+        color: #ffffff;
+        background: linear-gradient(145deg, #0d8b73 0%, #1d4ed8 52%, #7c63ff 100%);
+    }
+
+    .auth-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.16);
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .auth-aside h1 {
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 0.9rem;
+    }
+
+    .auth-aside p {
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-feature {
+        padding: 0.9rem 1rem;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .auth-feature:first-child {
+        background: rgba(255, 255, 255, 0.16);
+    }
+
+    .auth-feature:last-child {
+        background: rgba(255, 255, 255, 0.10);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .auth-panel {
+        padding: 2rem 1.2rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 247, 255, 0.98) 100%);
+    }
+
+    .auth-title {
+        font-size: clamp(1.7rem, 4vw, 2.3rem);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .auth-panel {
+            padding: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-page d-flex align-items-center">
+    <div class="container-fluid px-0">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-10">
+                <div class="auth-shell">
+                    <div class="row g-0">
+                        <div class="col-12 col-lg-5">
+                            <div class="auth-aside h-100">
+                                <span class="auth-badge">Paynet Finance</span>
+                                <h1>Hisobingizga kirib moliyangizni kuzating.</h1>
+                                <p>Kirim, chiqim, balans va oddiy tranzaksiya tarixini bitta joydan boshqaring.</p>
+
+                                <div class="d-grid gap-3">
+                                    <div class="auth-feature">
+                                        <strong class="d-block mb-1">Minimal boshqaruv</strong>
+                                        <small>Keraksiz murakkabliksiz kundalik finance tracker.</small>
+                                    </div>
+                                    <div class="auth-feature">
+                                        <strong class="d-block mb-1">Virtual karta</strong>
+                                        <small>Birinchi login paytida avtomatik yaratiladi va har bir tranzaksiya unga ta'sir qiladi.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-7">
+                            <div class="auth-panel">
+                                <h2 class="auth-title">Kirish</h2>
+                                <p class="section-subtitle mb-4">Username va parolingizni kiriting.</p>
+
+                                <form method="post" novalidate>
+                                    {% csrf_token %}
+
+                                    {% if form.non_field_errors %}
+                                        <div class="status-message error mb-3">{{ form.non_field_errors }}</div>
+                                    {% endif %}
+
+                                    <div class="mb-3">
+                                        <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Username</label>
+                                        {{ form.username }}
+                                        {% for error in form.username.errors %}
+                                            <div class="field-errors">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">Parol</label>
+                                        {{ form.password }}
+                                        {% for error in form.password.errors %}
+                                            <div class="field-errors">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if next %}
+                                        <input type="hidden" name="next" value="{{ next }}">
+                                    {% endif %}
+
+                                    <button type="submit" class="primary-button border-0 w-100 mt-2">Kirish</button>
+                                </form>
+
+                                <p class="content-muted mb-0 mt-4">
+                                    Akkount yo'qmi?
+                                    <a href="{% url 'signup' %}" class="text-decoration-none fw-bold">Ro'yxatdan o'tish</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

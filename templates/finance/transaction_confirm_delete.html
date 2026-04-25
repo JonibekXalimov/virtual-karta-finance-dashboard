@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Tranzaksiyani o'chirish{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+        <div class="surface-card panel-rose">
+            <h1 class="section-title">Tranzaksiyani o'chirish</h1>
+            <p class="section-subtitle mb-4">
+                Bu amaldan keyin yozuv tarixdan butunlay o'chadi, lekin saqlangan balans o'zgarmaydi.
+            </p>
+
+            <div class="p-3 rounded-4 border panel-gold mb-4">
+                <div class="d-flex justify-content-between gap-3">
+                    <span class="content-muted">Turi</span>
+                    <strong>{{ object.get_type_display }}</strong>
+                </div>
+                <div class="d-flex justify-content-between gap-3 mt-2">
+                    <span class="content-muted">Karta</span>
+                    <strong>{{ object.card.name }}</strong>
+                </div>
+                <div class="d-flex justify-content-between gap-3 mt-2">
+                    <span class="content-muted">Summa</span>
+                    <strong>{{ object.amount }} so'm</strong>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if next_url %}
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                {% endif %}
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" class="soft-button danger-link border-0">Ha, o'chirish</button>
+                    <a href="{% if next_url %}{{ next_url }}{% else %}{% url 'transaction_detail' object.pk %}{% endif %}" class="soft-button">Bekor qilish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
